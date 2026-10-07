@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1170" viewBox="0 0 1680 1170" role="img" aria-labelledby="title desc">
+  <title id="title">Learning to Explore with TS-grep</title>
+  <desc id="desc">Keyword-only view of a proposed architecture. A task and textual harness guide a frozen agent through Observe, TS Reason, and Act. TS Reason maintains hypothesis state with evidence and verification status. Actions query ts-grep and a financial time-series corpus; observations feed the execution loop. Trajectories are assessed, critiqued by a coach, and used to propose harness updates. Paired evaluation accepts or rejects updates. This figure describes a proposal, not an implemented training result.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" fill="#62768c"/></marker>
+    <marker id="blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" fill="#2566a8"/></marker>
+    <marker id="purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" fill="#8051a5"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #203247; }
+      .title { font-size: 40px; font-weight: 700; }
+      .subtitle { font-size: 24px; }
+      .section { font-size: 26px; font-weight: 700; }
+      .label { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .eyebrow { font-size: 15px; font-weight: 700; letter-spacing: 1.5px; }
+      .flow { fill: none; stroke: #62768c; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+      .blue-flow { fill: none; stroke: #2566a8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .purple-flow { fill: none; stroke: #8051a5; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .icon { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+    <symbol id="document" viewBox="0 0 40 40"><g class="icon"><path d="M10 4h15l7 7v25H8V4zM25 4v9h7M13 20h14M13 26h14M13 32h9"/></g></symbol>
+    <symbol id="robot" viewBox="0 0 40 40"><g class="icon"><rect x="6" y="12" width="28" height="23" rx="6"/><path d="M20 6v6M2 20v8M38 20v8M15 29h10"/><circle cx="20" cy="4" r="2"/><circle cx="14" cy="21" r="2"/><circle cx="26" cy="21" r="2"/></g></symbol>
+    <symbol id="chart" viewBox="0 0 40 40"><g class="icon"><path d="M5 5v29h31M9 25l7-9 7 4 10-13M9 29l7-5 7 3 10-7"/></g></symbol>
+    <symbol id="network" viewBox="0 0 40 40"><g class="icon"><circle cx="8" cy="12" r="4"/><circle cx="31" cy="8" r="4"/><circle cx="21" cy="30" r="4"/><path d="M12 12l15-3M10 16l8 10M29 12l-6 14"/></g></symbol>
+    <symbol id="search" viewBox="0 0 40 40"><g class="icon"><circle cx="17" cy="16" r="11"/><path d="M25 25l11 11M11 17h4l3-6 4 10"/></g></symbol>
+    <symbol id="database" viewBox="0 0 40 40"><g class="icon"><ellipse cx="20" cy="8" rx="14" ry="5"/><path d="M6 8v24c0 7 28 7 28 0V8M6 20c0 7 28 7 28 0"/></g></symbol>
+    <symbol id="log" viewBox="0 0 40 40"><g class="icon"><rect x="5" y="4" width="30" height="32" rx="4"/><path d="M18 13h11M18 21h11M18 29h11M10 12l2 2 3-4M10 20l2 2 3-4M10 28l2 2 3-4"/></g></symbol>
+    <symbol id="feedback" viewBox="0 0 40 40"><g class="icon"><path d="M6 5h28v24H18l-9 7v-7H6zM12 12h16M12 18h16M12 24h8"/></g></symbol>
+    <symbol id="pencil" viewBox="0 0 40 40"><g class="icon"><path d="M8 29l-2 8 8-2L35 14 27 6zM23 10l8 8M8 29l6 6M7 7h10M7 14h6"/></g></symbol>
+    <symbol id="check" viewBox="0 0 40 40"><g class="icon"><circle cx="20" cy="20" r="16"/><path d="M11 20l6 6 13-14"/></g></symbol>
+  </defs>
+
+  <rect width="1680" height="1170" fill="#fff"/>
+  <text x="60" y="66" class="title">Learning to Explore with TS-grep</text>
+  <text x="60" y="108" class="subtitle">Execution · Hypothesis state · Textual optimization</text>
+  <rect x="1290" y="35" width="330" height="42" rx="21" fill="#f0eafa"/>
+  <text x="1455" y="62" text-anchor="middle" class="eyebrow" style="fill:#8051a5">PROPOSED DESIGN</text>
+
+  <!-- Inner loop: task-specific observations, hypothesis state, and actions. -->
+  <rect x="40" y="155" width="1600" height="540" rx="22" fill="#f5f9fe" stroke="#d7e4f2" stroke-width="1.5"/>
+  <text x="78" y="199" class="section" style="fill:#2566a8">01  Execution loop</text>
+
+  <rect x="80" y="283" width="330" height="273" rx="16" fill="#fff" stroke="#abc4df" stroke-width="1.5"/>
+  <use href="#document" x="100" y="311" width="40" height="40" style="color:#2566a8"/>
+  <text x="151" y="340" class="label">Task + harness</text>
+  <text x="106" y="400" class="body">Query · Objective</text>
+  <path d="M106 444H384" stroke="#e0e8f1"/>
+  <text x="106" y="486" class="body" font-weight="700" style="fill:#2566a8">Harness H</text>
+  <text x="106" y="519" class="body">Prompt · Playbook</text>
+
+  <use href="#robot" x="485" y="241" width="37" height="37" style="color:#2566a8"/>
+  <text x="535" y="268" class="label">Agent rollout · Frozen LLM</text>
+  <rect x="485" y="301" width="185" height="136" rx="13" fill="#fff" stroke="#c5d7e9"/>
+  <use href="#chart" x="499" y="318" width="35" height="35" style="color:#2566a8"/>
+  <text x="545" y="345" class="body" font-weight="700">Observe</text>
+  <text x="506" y="387" class="body">Time series</text>
+  <text x="506" y="418" class="body">Tool results</text>
+
+  <rect x="717" y="301" width="197" height="136" rx="13" fill="#e5effd" stroke="#80a8d5" stroke-width="1.5"/>
+  <use href="#network" x="730" y="317" width="35" height="35" style="color:#2566a8"/>
+  <text x="774" y="345" class="body" font-weight="700">TS Reason</text>
+  <text x="733" y="387" class="body">Hypothesis state</text>
+  <text x="733" y="418" class="body">Evidence · Status</text>
+
+  <rect x="961" y="301" width="185" height="136" rx="13" fill="#fff" stroke="#c5d7e9"/>
+  <use href="#search" x="975" y="316" width="35" height="35" style="color:#2566a8"/>
+  <text x="1021" y="345" class="body" font-weight="700">Act</text>
+  <text x="980" y="387" class="body">Asset · Window</text>
+  <text x="980" y="418" class="body">Test</text>
+
+  <path d="M421 349H470" class="flow" marker-end="url(#arrow)"/>
+  <path d="M679 349H704" class="flow" marker-end="url(#arrow)"/>
+  <path d="M923 349H948" class="blue-flow" marker-end="url(#blue)"/>
+
+  <rect x="945" y="493" width="201" height="93" rx="13" fill="#e5effd" stroke="#80a8d5"/>
+  <text x="1045" y="529" text-anchor="middle" class="label">ts-grep</text>
+  <text x="1045" y="564" text-anchor="middle" class="body">Search · Compute</text>
+  <path d="M1053 449V479" class="blue-flow" marker-end="url(#blue)"/>
+  <rect x="715" y="493" width="160" height="93" rx="13" fill="#fff" stroke="#c5d7e9"/>
+  <use href="#database" x="729" y="507" width="31" height="31" style="color:#2566a8"/>
+  <text x="771" y="533" class="body" font-weight="700">Corpus</text>
+  <text x="795" y="566" text-anchor="middle" class="body">Time series</text>
+  <path d="M889 540H931" class="flow" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <path d="M1045 597V642H577V451" class="blue-flow" marker-end="url(#blue)"/>
+  <text x="815" y="673" text-anchor="middle" class="body" style="fill:#2566a8">New observations</text>
+
+  <rect x="1250" y="283" width="330" height="273" rx="16" fill="#fff" stroke="#abc4df" stroke-width="1.5"/>
+  <use href="#log" x="1269" y="311" width="40" height="40" style="color:#2566a8"/>
+  <text x="1320" y="340" class="label">Trajectory</text>
+  <text x="1276" y="390" class="body">Tool calls · Evidence</text>
+  <path d="M1276 414H1554" stroke="#e0e8f1"/>
+  <text x="1276" y="480" class="body" font-weight="700">Final answer</text>
+  <path d="M1158 349H1236" class="flow" marker-end="url(#arrow)"/>
+
+  <!-- Outer loop: improve the harness using development-task feedback. -->
+  <rect x="40" y="745" width="1600" height="325" rx="22" fill="#fbf8fe" stroke="#e4d8ed" stroke-width="1.5"/>
+  <text x="78" y="790" class="section" style="fill:#8051a5">02  Textual learning loop</text>
+  <path d="M1415 568V812" class="purple-flow" marker-end="url(#purple)"/>
+
+  <rect x="1250" y="826" width="330" height="204" rx="16" fill="#fff" stroke="#d5c1e5"/>
+  <use href="#log" x="1270" y="846" width="39" height="39" style="color:#8051a5"/>
+  <text x="1320" y="874" class="label">Assess rollout</text>
+  <text x="1276" y="924" class="body">Task score</text>
+  <text x="1276" y="968" class="body">Evidence checks</text>
+
+  <rect x="860" y="826" width="330" height="204" rx="16" fill="#fff8eb" stroke="#e6ce9f"/>
+  <use href="#feedback" x="880" y="846" width="39" height="39" style="color:#a67728"/>
+  <text x="930" y="874" class="label">Coach critique</text>
+  <text x="886" y="924" class="body">Errors · Gaps</text>
+  <text x="886" y="968" class="body">Textual feedback</text>
+
+  <rect x="470" y="826" width="330" height="204" rx="16" fill="#f0eafa" stroke="#bba0d1"/>
+  <use href="#pencil" x="490" y="846" width="39" height="39" style="color:#8051a5"/>
+  <text x="540" y="874" class="label">Harness update</text>
+  <text x="496" y="924" class="body">Prompt · Playbook</text>
+  <text x="496" y="968" class="body">Schema · Tool rules</text>
+
+  <rect x="80" y="826" width="330" height="204" rx="16" fill="#edf7f1" stroke="#a8cbb7"/>
+  <use href="#check" x="100" y="846" width="39" height="39" style="color:#398360"/>
+  <text x="150" y="874" class="label">Validate &amp; select</text>
+  <text x="106" y="924" class="body">Paired evaluation</text>
+  <text x="106" y="968" class="body">Accept / Reject</text>
+
+  <path d="M1238 927H1204" class="purple-flow" marker-end="url(#purple)"/>
+  <path d="M848 927H814" class="purple-flow" marker-end="url(#purple)"/>
+  <path d="M458 927H424" class="purple-flow" marker-end="url(#purple)"/>
+  <path d="M80 927H59V635H245V570" class="purple-flow" marker-end="url(#purple)"/>
+  <text x="276" y="630" class="body" style="fill:#8051a5">Selected harness</text>
+
+  <text x="840" y="1127" text-anchor="middle" class="subtitle">Development → Harness freeze → Held-out evaluation</text>
+</svg>

@@ -1,0 +1,19 @@
+FIN-RATE 공개 metadata 재확인 — 2026-10-07
+
+결론: metadata가 전혀 없는 것은 아니다. Chunk ID와 기업·날짜·서식·Item이 들어간 제목은 있다. 다만 chunk → 원본 SEC 공시 accession/CIK/원문 URL을 직접 연결하는 공식 필드나 별도 매핑 파일은 확인되지 않았다.
+
+확인 범위
+- HF main35커밋 + README 수정PR2개, 공식 GitHub main29커밋의 전체 파일 이력.
+- 현재 corpus.zip: corpus.jsonl 한 파일,15,311행 모두 _id/title/text 3개 필드.
+- 최초 corpus 업로드와 현재 ZIP SHA-256 동일.
+- HF 과거QA JSON6버전/GitHub QA JSON8버전의 전체 top-level schema.
+- QA doc_id/doc_ids는 corpus의 doc_XXXXXX를 가리키며 source는 chunk_based/company_comparison 같은 질문 유형이다.
+- 코드의 corpus loader는 _id→text만 읽고 원문 accession/URL을 조회하지 않는다.
+- 공식 논문§3.1은 SEC 공시수집→Markdown→Item chunking을 설명하지만 원문 매핑 다운로드는 제시하지 않는다.
+- 공개 GitHub issues/releases 없음. HF3개 discussion: parquet 변환 안내와 README 수정PR2개; 원문 매핑 첨부 없음.
+
+본문 내부의 링크
+986개chunk(886개제목묶음)에SEC Archives링크가있다. chunk내중복제거후9,025회,고유URL3,791개. 이것은 별도 metadata필드가 아니다. VLO2025 10-K의본문에2004년첨부계약링크가있는등타공시/별첨참조가섞여있다. 같은날·유형후보primary URL에일치하는3개도실제문맥은함께읽으라는다른supplement/prospectus참조였다. 따라서그링크를그대로현재chunk의원본URL로확정하지않았다.
+
+원문HTML DB나기존매핑수정없음. 모델실험/채점없음. 저자연락없음.
+세부증거: result/finrate_metadata_audit_20261007/report.json 및 Git history/API snapshot/schema audit.

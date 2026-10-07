@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" role="img" aria-labelledby="title description">
+  <title id="title">TS-grep: Relation-guided Exploration</title>
+  <desc id="description">An agent observes available time series, reasons about temporal relationships, and chooses the next assets, time windows, and tests. The ts-grep interface searches and computes over a financial time-series corpus. Returned evidence feeds back into the agent's observations and hypotheses.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#52657a"/>
+    </marker>
+    <marker id="blue-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#2563a6"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #1c2c40; }
+      .heading { font-size: 38px; font-weight: 700; }
+      .subtitle { font-size: 22px; fill: #52657a; }
+      .eyebrow { font-size: 15px; font-weight: 700; letter-spacing: 2px; fill: #64758b; }
+      .stage { font-size: 31px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .detail { font-size: 20px; fill: #52657a; }
+      .small { font-size: 18px; fill: #52657a; }
+      .tool-title { font-size: 29px; font-weight: 700; }
+      .flow { fill: none; stroke: #52657a; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+      .feedback { fill: none; stroke: #2563a6; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="820" fill="#ffffff"/>
+  <text x="60" y="64" class="heading">TS-grep: Relation-guided Exploration</text>
+  <text x="60" y="105" class="subtitle">Use observed temporal relationships to decide what to investigate next.</text>
+  <text x="60" y="162" class="eyebrow">AGENT REASONING–ACTION LOOP</text>
+
+  <!-- Three agent stages. The highlighted stage is the proposed emphasis. -->
+  <rect x="60" y="185" width="390" height="225" rx="18" fill="#f5f7fa" stroke="#d9e1e9" stroke-width="1.5"/>
+  <text x="90" y="231" class="eyebrow">01</text>
+  <text x="90" y="276" class="stage">Observe</text>
+  <text x="90" y="321" class="body">Read available time series</text>
+  <text x="90" y="363" class="detail">Movements and relationship clues</text>
+
+  <rect x="525" y="185" width="390" height="225" rx="18" fill="#eef5ff" stroke="#7ea5d5" stroke-width="1.8"/>
+  <text x="555" y="231" class="eyebrow" style="fill:#2563a6">02</text>
+  <text x="555" y="276" class="stage">TS Reasoning</text>
+  <text x="555" y="321" class="body">Form relationship hypotheses</text>
+  <text x="555" y="363" class="detail">Co-movement · Lead–lag · Change</text>
+
+  <rect x="990" y="185" width="390" height="225" rx="18" fill="#f5f7fa" stroke="#d9e1e9" stroke-width="1.5"/>
+  <text x="1020" y="231" class="eyebrow">03</text>
+  <text x="1020" y="276" class="stage">Act</text>
+  <text x="1020" y="321" class="body">Choose the next search</text>
+  <text x="1020" y="363" class="detail">Assets · Time windows · Tests</text>
+
+  <path d="M 460 294 H 511" class="flow" marker-end="url(#arrow)"/>
+  <path d="M 925 294 H 976" class="feedback" marker-end="url(#blue-arrow)"/>
+
+  <!-- The interface executes the selected search against the corpus. -->
+  <path d="M 1185 420 V 502" class="flow" marker-end="url(#arrow)"/>
+  <text x="1204" y="467" class="small">Execute</text>
+
+  <rect x="1040" y="520" width="290" height="122" rx="16" fill="#eef5ff" stroke="#7ea5d5" stroke-width="1.5"/>
+  <text x="1185" y="562" text-anchor="middle" class="tool-title">ts-grep</text>
+  <text x="1185" y="598" text-anchor="middle" class="body">Search &amp; compute</text>
+  <text x="1185" y="625" text-anchor="middle" class="small">Time-series interface</text>
+
+  <rect x="525" y="520" width="400" height="122" rx="16" fill="#f5f7fa" stroke="#d9e1e9" stroke-width="1.5"/>
+  <text x="725" y="557" text-anchor="middle" class="body" font-weight="700">Financial time-series corpus</text>
+  <text x="725" y="591" text-anchor="middle" class="detail">Stocks · ETFs · FX · Rates</text>
+  <text x="725" y="620" text-anchor="middle" class="detail">Commodities · Macro indicators</text>
+
+  <path d="M 940 581 H 1025" class="flow" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="983" y="550" text-anchor="middle" class="small">Query / result</text>
+
+  <!-- New evidence closes the loop; no causal claim or preselected asset is implied. -->
+  <path d="M 1185 654 V 715 H 255 V 424" class="feedback" marker-end="url(#blue-arrow)"/>
+  <text x="714" y="693" text-anchor="middle" class="body" style="fill:#2563a6">New evidence updates observations and hypotheses</text>
+  <text x="60" y="781" class="small">Relationships guide the next action; new observations refine the relationships.</text>
+</svg>

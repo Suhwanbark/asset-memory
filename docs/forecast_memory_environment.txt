@@ -1,0 +1,15 @@
+Observed environment, 2026-09-28 (not a portable full lockfile)
+Python 3.10.19, inherited system-site-packages from /home/hob/anaconda3/envs/su
+Codex CLI 0.153.4; model gpt-5.6-luna; reasoning low
+mem0ai==2.2.1
+openai==2.44.0
+qdrant-client==1.18.0
+torch==2.9.1
+transformers==4.52.4
+beautifulsoup4==4.15.0
+requests==2.34.2
+tiktoken==0.9.0
+Embedding snapshot: sentence-transformers/all-MiniLM-L6-v2 / 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+CPU only. No fresh GPU model installation. No private API credentials stored in experiment artifacts.
+spaCy/fastembed optional extras absent; native SDK falls back without lemmatization/BM25.
+Native Mem0 source hashes recorded in result/forecast_memory_smoke_v1/provenance.json.

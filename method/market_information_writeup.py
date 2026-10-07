@@ -1,0 +1,136 @@
+"""Render the completed PoC report from immutable result records."""
+import json
+from pathlib import Path
+from market_information_sources import ROOT
+
+def read(name):return json.loads((ROOT/'result'/name/'report.json').read_text())
+def main():
+    a=read('market_information_poc_v1');b=read('market_information_news_poc_v1');d=read('market_information_diagnostics_v1')
+    assert a['complete'] and b['complete'] and d['complete']
+    names={'recency':'최신순','relevance':'TF-IDF 관련성','random':'무작위','llm_priority':'중립 LLM 선택',
+           'llm_temporal':'시간효용 지시 LLM 선택','no_evidence':'자료 없음','full_pool':'후보 전체','market_price':'당시 시장확률'}
+    table=['| 조건 | 연준 본실험 Brier | 뉴스 확장 Brier |','|---|---:|---:|']
+    for k,name in names.items():
+        x=next(s for s in a['summary'] if s['split']=='main' and s['condition']==k)
+        y=next(s for s in b['summary'] if s['split']=='main' and s['condition']==k)
+        table.append(f'| {name} | {x["event_mean_brier"]:.4f} | {y["event_mean_brier"]:.4f} |')
+    comparisons=[]
+    for r,title in [(a,'연준'),(b,'뉴스')]:
+        x=next(c for c in r['comparisons'] if c['treatment']=='llm_temporal' and c['reference']=='recency')
+        ci=x['event_bootstrap_95ci'];block=x['three_meeting_block_95ci']
+        comparisons.append(f'- {title}: 평균 Brier 개선량 {x["mean_brier_improvement"]:+.4f}, 사건 bootstrap 95% 구간 [{ci[0]:+.4f}, {ci[1]:+.4f}], 연속 3사건 block 구간 [{block[0]:+.4f}, {block[1]:+.4f}].')
+    repeat_table=['| 판단 시점 | 시장 구간 | 최신순 평균 확률 | 시간효용 선택 평균 확률 | 평균 Brier 개선량 |','|---|---|---:|---:|---:|']
+    news_cases={c['id']:c for c in json.loads((ROOT/'data/market_information_news_poc_v1/cases.json').read_text())['cases']}
+    news_labels={c['case_id']:c for c in json.loads((ROOT/'data/market_information_news_poc_v1/labels.json').read_text())['labels']}
+    for p in d['paired']:
+        if p['group']!='news_repeats':continue
+        rs={x['condition']:x for x in d['summary'] if x['group']==p['group'] and x['case_id']==p['case_id']}
+        c=news_cases[p['case_id']];phase=news_labels[p['case_id']]['phase']['phase']
+        repeat_table.append(f'| {c["cutoff"][:10]} | {phase} | {rs["recency"]["mean_probability"]:.3f} | {rs["llm_temporal"]["mean_probability"]:.3f} | {p["mean_brier_improvement"]:+.4f} |')
+    diagnostic_table=['| 진단 | 시점 | 기준 대비 평균 Brier 개선량 |','|---|---|---:|']
+    for p in d['paired']:
+        if p['group']=='news_repeats':continue
+        diagnostic_table.append(f'| {p["group"]} | {p["case_id"]} | {p["mean_brier_improvement"]:+.4f} |')
+    calls=a['n_actual_model_calls']+b['n_actual_model_calls']+d['n_actual_model_calls']
+    inputs=a['transport_usage']['input_tokens']+b['transport_usage']['input_tokens']+d['input_tokens']
+    outputs=a['transport_usage']['output_tokens']+b['transport_usage']['output_tokens']+d['output_tokens']
+    text=f'''# 실제 금융 예측시장 정보 선택 PoC 결과 — 2026-09-29
+
+**평가 유효성 정정: 실행 모델의 학습 지식 기준일과 고정 가중치 공개 시점을 검증하지 않았다. 따라서 아래 결과는 입력 묶음에 따른 모델 출력 차이를 기록한 탐색 실행이며, 당시 알 수 없었던 정보를 배제한 예측이나 과거 정보의 효용을 입증한 결과로 사용할 수 없다.**
+
+실제 데이터셋과 실행 파이프라인은 구축했다. 오래된 정보를 포함한 묶음의 사후 점수가 더 좋은 사례가 있었지만, 선택 모델과 예측 모델 양쪽의 사전 지식 오염을 배제하지 못했다. 아래 수치와 원 응답은 그대로 보존한다. 유효한 재평가에는 각 판단 시점보다 먼저 공개되어 고정된 모델 가중치, 또는 모델을 고정한 뒤 수집하는 미래 사건이 필요하다. 프롬프트의 Information cutoff와 자료 없음 대조군만으로 이 문제를 해결할 수 없다.
+
+이번 결과는 정보 가치가 발행 순서만으로 정해지지 않는다는 연구 동기를 뒷받침하는 탐색 사례다. 시장 구간이 그 차이를 일으킨다는 인과 주장, LLM의 보편적인 시간 이해 결함, 실전 투자 우위, 장기 memory 시스템 성능은 아직 입증하지 않았다.
+
+## 실제로 구축한 데이터
+
+| 구분 | 독립 사건 | 판단 시점 | 실제 사용 자료 | 평가 범위 |
+|---|---:|---:|---:|---|
+| 연준 공식자료 | 28회의 | 78 | 201개 원문에서 발췌 | 앞 2회의·6시점은 smoke; 본실험 26회의·72시점 |
+| 금융·거시경제 뉴스 | 8사건 | 23 | 213개 기사 제목·설명 | 별도 탐색 확장 |
+| 합계 | 36 | 101 | 414 | 두 표본 점수는 합산하지 않음 |
+
+연준 카드 아카이브에는 212개, 뉴스 카드 아카이브에는 239개가 있지만 모든 카드가 최종 후보에 쓰이지는 않았다. 독립 사건 수와 반복 판단 시점 수를 구분한다. 사건은 실제 Kalshi 계약이고 결과는 최종 정산값이며, 뉴스마다 연구자가 유용/무용 정답을 붙이지 않았다.
+
+판단 시점은 시장 종료 21·7·2일 전이다. 그때 공개된 정보만 입력했다. 연준 자료는 최근 90일, 최대 24개 후보에서 본문 각256토큰, 선택2개=512토큰이다. 뉴스는 당시 아카이브 제목·설명2개, 최대512토큰이며 길이가 다르다. 실제 평균 본문 길이는 최신순103.0토큰, 시간효용선택109.3토큰이었다.
+
+뉴스 사건은 일본은행, 달걀 물가, GDP, 고용, S&P500, Nasdaq100, Tesla 인도량, 미국채 수익률이다. 원 SWM 아카이브의 가격변동 중심 수집 편향과 사후 수집된 뉴스 버전의 한계는 남는다. posterior attribution과 미래 가격은 모델 입력·자료 효용 정답으로 사용하지 않았다.
+
+## 비교 방법과 전체 결과
+
+동일한 `gpt-5.6-luna`, low reasoning, stateless 예측 호출을 사용했다. 선택 모델의 설명은 예측 모델에 전달하지 않았다. 같은 사례에서 같은 자료 묶음이 선택되면 동일한 응답을 캐시로 공유했다. 자료 없음·후보 전체·시장확률은 예산이 다른 진단/참고 기준선이다. 시장확률은 모델 입력으로 주지 않았다.
+
+실제 사건 결과에 대한 Brier 점수 `(예측확률−0/1 결과)²`를 사용하며 작을수록 좋다. 시점별 손실을 먼저 사건 안에서 평균하고 사건들을 같은 가중치로 평균했다. 단일 사건 결과가 각 뉴스의 본질적 가치를 확정하지는 않는다.
+
+{chr(10).join(table)}
+
+중립 LLM 선택은 자료 ID를 잘못 출력한 사례가 표본마다1개 있어 각각71/72,22/23개의 성공 응답으로 계산했다. 실패를 제외한 점수이므로 다른 조건과 단순 비교하면 안 된다. 실패 손실을0~1로 놓은 전체 표본 Brier 범위는 연준0.0653~0.0781, 뉴스0.1531~0.1948이다. 핵심 시간효용선택 대 최신순 비교는 모두 성공했다.
+
+양수는 시간효용선택이 최신순보다 좋다는 뜻이다.
+
+{chr(10).join(comparisons)}
+
+두 표본 모두 구간이0을 포함한다. 시간효용 지시 자체의 일반적 성능 우위를 주장할 수 없다. 뉴스 확장에서도 평균은 최신순이 더 좋았다. 당시 시장확률은 양쪽에서 모델보다 좋은 점수였으며, 이는 동일 정보 조건에서의 모델 간 비교나 거래 수익률이 아니다.
+
+오래된 자료를 최신순 묶음 대신 포함한 시점을 따로 세면, 연준은58시점 중 개선≥0.02가7개, 악화≥0.02가7개, 작거나 같은 차이가44개였다. 뉴스는22시점 중 개선5개·악화10개·나머지7개였다. 이 기준은 사례를 설명하기 위한 임계값이며 유의성 검정이 아니다.
+
+## 구체적인 목표 사례: 2025년 12월 일본은행
+
+질문은 12월 회의에서21~40bp를 인상할지였다. 11월28일 시점의 최신2개 기사는 모두11월27일 노구치 위원의 점진적 인상 발언을 다뤘다. 시간효용선택은 그중 하나를11월26일의 근시일 내 인상 준비 보도로 바꿨다. 두 묶음은103토큰과108토큰으로, 정확히 같은 길이는 아니다.
+
+처음 예측에서 인상확률은 최신순0.45, 이전 기사 포함0.68이었다. 실제 계약은YES로 정산되었다. 별도5회 반복에서도 이전 기사 포함 묶음의 평균 손실이 작았다. [11월26일 Reuters 기사](https://www.reuters.com/world/asia-pacific/boj-preps-markets-near-term-hike-weak-yen-overshadows-politics-2025-11-26/), [11월27일 Reuters 기사](https://www.reuters.com/world/asia-pacific/bank-japans-noguchi-advocates-gradual-interest-rate-hikes-2025-11-27/), [일본은행의12월19일 공식 결정](https://www.boj.or.jp/en/mopo/mpmdeci/state_2025/k251219a.htm).
+
+{chr(10).join(repeat_table)}
+
+각 수치는 원래 호출과 별개인5회 결과다. 전체 반복을 먼저 고정하고 전부 보존했다. 11월28일과12월17일에는 이전 자료를 포함한 묶음이 좋았지만,12월12일 차이는 작았다. 같은 일본은행 사건의 모든 시점을 함께 보여주며 좋은 시점만 남기지 않았다. 단, 시점마다 선택 묶음이 달라서 **동일 기사 하나의 시간별 가치 변화**를 직접 측정한 표는 아니다. 사건과 묶음을 최초 결과를 보고 골랐으므로 독립 확인 표본도 아니다.
+
+## 같은 과거 자료의 기여와 원문 발췌 문제
+
+연준의 각 사건에서 모든 시점에 존재하는 과거 statement를 미리 하나 고정했다. 최근2개 자료에 그 자료를 더했을 때의 차이를 비교했다. 이는512 대768토큰의 추가 진단이다. 전체 본실험에서는 anchor 추가가 평균적으로 더 좋지 않았다. 2024년11월 사건의 모든 시점을5회씩 다시 실행한 결과도 아래에 그대로 남긴다.
+
+원문 감사에서는24개 회의록이 파서에서 하나의 긴 문단으로 처리되어 앞256토큰만 선택된 것을 발견했다. Powell의2025년8월22일 발췌는 현재 정책 신호를 빠뜨렸다. 제목 키워드로 후보를 모았으므로 모든 관련 연설을 포함한 것도 아니다. 이 때문에 연준 결과는 문서 선택뿐 아니라 후보 수집·발췌 품질의 영향을 받는다. [해당 Powell 원문](https://www.federalreserve.gov/newsevents/speech/powell20250822a.htm).
+
+이를 숨기거나 유리한 사례만 지우지 않고,2025년9월 사건의 모든 시점·두 선택 묶음을 원래 발췌와 전체 선택 원문으로 각각5회 실행했다. 아래의 full_source는 문서 길이가 다르므로 동일예산 비교가 아니다.
+
+{chr(10).join(diagnostic_table)}
+
+고정 anchor의 반복 개선량은+0.0125,+0.0016,−0.0054로 모두 절대값0.02 미만이었다. 초기 단일 실행에서 보인 기여 변화가 크게 유지되지는 않았다. 따라서 **같은 과거 정보의 가치가 시점에 따라 크게 바뀐다는 강한 재현 결과는 아직 없다.**
+
+2025년9월의21일 전 비교는 발췌에서−0.0844, 전체 원문에서+0.1532로 방향까지 달라졌다. 발췌 및 문맥 길이에 민감한 결과다. 반복 결과는 고정된 자료 선택에 조건부인 예측 모델의 변동성을 보여준다. 선택 모델을5번씩 다시 평가한 것은 아니다. 발췌와 전체 원문 점수의 차이를 모두 시간 이해 능력으로 해석하면 안 된다.
+
+## 시장 구간을 어디까지 다뤘는가
+
+최근7일 가격과 거래일 수로 consensus/fluctuation/reversal/intermediate를 정했다. 연준 전체78시점은57/10/1/10개, 뉴스23시점은5/6/0/12개다. 단순히 거래가 없어서 가격이 안 움직인 경우를 consensus로 정하지 않았다. 미래 캔들을 추가해도 과거 구간 라벨이 바뀌지 않는 테스트를 통과했다.
+
+원래 실험은 **판단 시점의 시장 구간별 사후 분석**이다. 추가로 각 자료가 공개된 시점의 시장 구간을 `evidence_market_context.json`에 연결했다. 해당 시점에 시장이 열리지 않았거나 이력이 없으면 missing으로 보존했다. 이 추가 주석은 추론 뒤 작성했고 모델에 주지 않았다. 따라서 아직 '변동기에 생성된 정보가 안정기에 생성된 정보보다 본질적으로 좋다'거나, 모델이 시장 구간을 이용해 가치를 판단했다고 주장할 수 없다.
+
+## 실행 완결성과 재현
+
+- 본 비교·추가 진단863개 조건 중861개 유효 예측과2개 selector 실패를 보존했다. 반복 진단120개 예측을 추가 완료했다.
+- 캐시 공유를 반영한 실제 모델 호출 {calls:,}회. 보고된 transport 입력 {inputs:,}토큰, 출력 {outputs:,}토큰. 입력은 CLI 내부 지시와 캐시 입력도 포함하며 자료 본문 토큰과 다르다.
+- 원문·입력 hash, cutoff, 예산, 실제 입력 대응, 미래정보 분리, 실패 응답 보존과 반복 진단을 검사한20개 테스트 통과. 원 실행에서 citation ID 오류6건과 마지막 reason 문자열이 닫히지 않은 응답1건은 별도로 보존했다. 확률을 재생성하지 않았다.
+- 가격·정산은 실제 Kalshi 공개 API, 연준은 공식 날짜별 자료, 뉴스는 고정 SWM 배포 revision에서 수집했다. 후향적 모델 지식 오염은 배제하지 못한다. 자료 없음 기준선을 포함해도 이 한계가 사라지지는 않는다.
+- 첫 공개 결과 이전에 고정된 prospective holdout은 아직 없다. 이번 데이터로 지시문을 조정한다면 이 데이터는 이후 개발 표본으로만 써야 한다.
+
+재채점과 감사는 네트워크·추가 모델 호출 없이 아래 명령으로 가능하다. working directory는 이 문서의 상위 `replicate/`이다.
+
+```bash
+.venv/bin/python method/market_information_report.py
+.venv/bin/python method/market_information_report.py --dataset-name market_information_news_poc_v1
+.venv/bin/python method/market_information_diagnostics.py --report
+AUDIT_COMPLETED_MI=1 .venv/bin/python -m unittest discover -s tests -p 'market_information_test.py' -v
+.venv/bin/python method/market_information_writeup.py
+```
+
+데이터는 `data/market_information_poc_v1/`, `data/market_information_news_poc_v1/`, 응답·선택·오류·집계는 대응하는 `result/` 디렉터리와 `result/market_information_diagnostics_v1/`에 있다. 원 호출 프롬프트·raw JSONL·model·입출력 usage를 보존했다. `freeze.json`과 코드 snapshot으로 원 실행 버전을 구분한다. 과거 작업을 덮어쓰거나 Git push하지 않았다.
+
+## 논문 주제로 이어지는 구체적인 방향
+
+현재 확실하게 확보한 것은 실제 사건·다중 시점·정보 묶음·시장 상태·예측 결과를 연결한 실행 가능한 데이터 구조와, 최신순만으로는 놓치는 정보가 있다는 탐색 사례다. 현 단계에서 기존 모델의 일반적 결함을 발견했다고 쓰는 것은 과하다.
+
+다음 benchmark는 자료 전체가 충분히 보존된 뉴스 사건을 중심으로, **같은 과거 자료를 고정하고 이후 정보와 시장 상황만 갱신했을 때 보존·검색·폐기 선택이 어떻게 달라져야 하는지**를 평가하는 방향이 적합하다. 유용성 정답을 시장 변동성에서 바로 만들지 말고, 여러 고정 예측 모델의 반복 추가/제거 결과와 사람이 확인한 정보 관계를 분리해서 기록해야 한다. 현재 발견 사례로 설계를 다듬되 새 사건을 결과 전에 잠가 확인해야 한다. 이번 PoC에서 장기 memory 시스템까지 실행한 것은 아니다.
+'''
+    (ROOT/'docs/market_information_poc_results.md').write_text(text)
+    print('WROTE docs/market_information_poc_results.md')
+
+if __name__=='__main__':main()

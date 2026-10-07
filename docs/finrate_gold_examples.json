@@ -1,0 +1,75 @@
+{
+  "purpose": "Inspect original gold annotations; not model predictions or scores",
+  "source_revision": "284b1b4f6cd1e58574f1f1d17c29b35c6aa72cce",
+  "records": [
+    {
+      "task": "LT-QA",
+      "question": "How did the total compensation for the Chief Executive Officer (CEO) of CADIZ INC change from 2022 (reported in 2023) to 2023 (reported in 2024)?",
+      "answer": "The total compensation for the then-CEO, Scott Slater, decreased significantly. In 2022, he received total compensation of $820,152. In 2023, his total compensation was reported at $385,504. This represents a reduction of more than 50% in the CEO's total pay between these two years.",
+      "doc_ids": [
+        "doc_010974",
+        "doc_011075",
+        "doc_011078"
+      ],
+      "category": "Executive Compensation & Equity Incentives",
+      "key_points": [
+        "The answer must state that the CEO's total compensation changed (specifically, that it decreased).",
+        "The answer must provide the correct total compensation figure for 2022 ($820,152).",
+        "The answer must provide the correct total compensation figure for 2023 ($385,504).",
+        "The answer must correctly identify the CEO in question (Scott Slater).",
+        "The answer must correctly reference the years the compensation is reported for (2022 and 2023)."
+      ],
+      "q_id": "qa_2_002030"
+    },
+    {
+      "task": "EC-QA",
+      "question": "Compare the cash flow coverage of capital expenditures for Eagle Materials Inc. and Veracyte, Inc. in 2020 and briefly analyze its implications.",
+      "answer": "In 2020, Eagle Materials Inc. generated $399.3 million in operating cash flow and spent $132.0 million in capital expenditures, resulting in a coverage ratio of approximately 3.02 times. Veracyte, Inc. used $9,711 thousand in operating activities and had minimal capital expenditures, but relied on $193,831 thousand from equity offerings to fund operations and growth. Eagle's strong coverage indicates self-sustainability, while Veracyte's reliance on external financing highlights its growth-focused cash burn strategy.",
+      "doc_ids": [
+        "doc_002806",
+        "doc_005694"
+      ],
+      "source": "company_comparison",
+      "key_points": [
+        "State Eagle Materials Inc.'s 2020 operating cash flow ($399.3 million) and capital expenditures ($132.0 million).",
+        "State Veracyte, Inc.'s 2020 operating cash flow (used $9,711 thousand) and reliance on equity financing ($193,831 thousand).",
+        "Calculate Eagle's cash flow coverage ratio (approx. 3.02x).",
+        "Note Veracyte's minimal capital expenditures but high financing need.",
+        "Explain Eagle's self-sustaining cash flow model.",
+        "Explain Veracyte's growth-stage dependence on external funding."
+      ],
+      "q_id": "qa_3_001952"
+    },
+    {
+      "task": "EC-QA",
+      "question": "How did Kinetic_Seas_Inc.'s risk management approach in 2022 differ from PENN_Entertainment,_Inc.'s approach as described in their item8, item1?",
+      "answer": "Both Kinetic_Seas_Inc. and PENN_Entertainment,_Inc. had distinct risk management approaches in 2022 as outlined in their item8, item1 sections. The specific differences would be evident from a detailed comparison of the risk factors and mitigation strategies disclosed by each company.",
+      "doc_ids": [
+        "doc_002433",
+        "doc_002418",
+        "doc_002445",
+        "doc_011186",
+        "doc_011189",
+        "doc_002446",
+        "doc_002416",
+        "doc_002442",
+        "doc_011195"
+      ],
+      "source": "company_comparison",
+      "key_points": [
+        "The answer must explicitly state at least one specific difference between Kinetic_Seas_Inc.'s 2022 risk management approach and PENN_Entertainment,_Inc.'s approach.",
+        "The answer must reference the specific source documents mentioned in the question (item8 and item1) for both companies.",
+        "The answer must correctly attribute the described approaches to the correct year, 2022.",
+        "The answer must demonstrate a comparative analysis, not just a restatement that differences exist."
+      ],
+      "q_id": "qa_3_001926"
+    }
+  ],
+  "review_notes": [
+    {
+      "q_id": "qa_3_001926",
+      "finding": "The reference answer says the approaches differ but gives no specific difference, while key_points require at least one specific difference and a comparative analysis.",
+      "status": "reference/key-point mismatch flagged for review; not removed from cohort"
+    }
+  ]
+}

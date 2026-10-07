@@ -1,0 +1,54 @@
+FIN-RATE 원문 Item 보존 점검 — 2026-10-07
+
+결론
+전체 Item을 손실 없이 보존한 corpus로 단정할 수 없다. 원문에 존재하지만 배포본에서 본문이 빠진 참조 전용 섹션을 두 공시에서 확인했다. 특정 핵심 Item만 취한 corpus라는 증거는 없으며 긴 본문은 폭넓게 보존돼 있다. 확인된 누락을 전체 dataset의 누락률이나 의도적 삭제 정책으로 일반화하지 않는다.
+
+확인 범위와 방법
+- 기존 PoC 기업 및 GS/VLO, 짧은 10-K 사례, 일부 10-Q/8-K/DEF/6-K를 포함하는 진단 표본 23개를 선택했다. 무작위 표본은 아니다.
+- SEC submissions API에서 CIK·실제 form·accession·primaryDocument를 확인했다. 제목 날짜에 맞는 후보가 없을 때 ±3일 범위의 단일 후보를 찾고 본문 일치로 대조했다. 같은 날짜 후보가 여러 개면 임의로 선택하지 않았다.
+- SEC Archives의 서버 직접 다운로드가 HTTP403을 반환하여 동일 accession 경로의 공개 Yahoo Finance HTML 사본을 이용했다. 누락 핵심 사례와 정정공시 설명은 web 도구로 SEC 원문에서도 직접 확인했다. 사본과 SEC 원문의 바이트 동일성까지 검증한 것은 아니다.
+- 7개 기업의 12개 문서에서 전체 primary HTML 텍스트와 해당 filing의 모든 chunk를 비교했다. 9개는 공개 사본404, 2개는 동일 날짜 후보가 여러 개여서 비교하지 않았다.
+- 비교 완료 문서: 정규10-K 7개, 10-K/A 3개, 10-Q 1개, 8-K 1개.
+- 자동 점검은 공백·대소문자·문장부호·Markdown 링크를 정규화한 뒤 원문100문자 구간이 동일 filing corpus에 있는지 검색했다. 자동 불일치를 사람이 원문과 chunk에서 재확인했다.
+- 이 지표는 내용 누락 탐지 보조용이다. 표의 배치·음수 부호·그림·외부 첨부파일·정보의 원래 위치와 순서를 보장하지 않는다. 100문자 일치율을 정확도나 완전성으로 부르지 않는다.
+
+확인 사례 1: NXPL / NextPlat, 2023-03-31 10-K
+SEC accession: 0001493152-23-010400
+원문: https://www.sec.gov/Archives/edgar/data/1058307/000149315223010400/form10-k.htm
+원문 Part III에는 Item10 다음에 Item11(보상),12(주주구조),13(관계자 거래),14(회계감사 비용)가 각각 존재한다. 이 네 항목의 본문은 2023 proxy statement로 내용을 참조한다는 동일한 짧은 문장이다.
+동일 filing의66개 chunk 전체에서 이 참조 문장의 정규화 일치 횟수는0, 원문에서는4였다. Item11–14 제목은 목차에 남아 있지만 본문 섹션은 없다. doc_008176(순번19)은 PartIII와Item10 본문까지만 담고 바로 다음 doc_008177(순번20)이PartIV/Item15로 넘어간다.
+해석: 실제 본문 섹션 누락이다. 다만 원문 해당 위치도 상세 보상/주주 수치를 담지 않고 별도 문서를 참조하므로, 누락을 상세 수치 삭제로 표현하면 안 된다.
+
+확인 사례 2: REEMF / Rare Element Resources, 2024-10-25 8-K
+SEC accession: 0001419806-24-000023
+원문: https://www.sec.gov/Archives/edgar/data/1419806/000141980624000023/reemf-20241025x8k.htm
+원문에는 Item2.01(자산 취득/처분), Item3.02(미등록 지분증권 매각), Item8.01(기타 사건)이 있다. 앞의 두 항목은 Item8.01을 참조한다는 문장만 담고 있다.
+동일 filing의6개 chunk 전체에서 두 참조 문장은0회(원문2회)다. Item2.01/3.02 본문은 없고 doc_013187에Item8.01 거래 내용이 보존돼 있다.
+해석: 참조 섹션과 Item 분류 정보는 누락되지만, 이 사례의 거래 사실은 참조 대상인Item8.01에 남아 있다. 과거 bank 도식에 사용했던 공시이므로 원본 corpus가 완전한 형식 보존본이라고 가정하면 안 된다.
+
+확인 사례 3: REEMF 2022-04-27 및 GS의2024년 10-K/A
+REEMF 원문: https://www.sec.gov/Archives/edgar/data/1419806/000141980622000010/reem-20211231x10ka.htm
+GS 원문: https://www.sec.gov/Archives/edgar/data/886982/000088698224000012/gs-20231231.htm
+corpus 제목은10-K이지만 SEC 실제 유형은10-K/A다. REEMF는 PartIII 중심의 정정공시, GS는Item15 등 첨부 인증서/참조를 정정하는 공시다. 원래 일부 항목만 포함하는 문서이므로Item1/7/8이 없다는 사실만으로 전처리 누락이라고 판정하면 안 된다.
+이 표본에서 HUSA_2025-04-30_10-K도 실제10-K/A였다. 이전 inventory의10-K161개는 정규10-K와 정정공시가 섞인 제목 그룹 수다.
+
+추가 metadata 발견
+제목 날짜와 SEC filingDate가 항상 같지 않다. 예: GS 제목2024-02-27은 SEC filingDate2024-02-28의 정정공시와 본문이 일치하며, GEN 제목2023-05-24는 filingDate2023-05-25 문서와 일치한다. 날짜 차이의 생성 규칙/시간대는 아직 확정하지 않았다. 날짜를 바로 공식 제출일이나 공개시각으로 사용하면 안 된다.
+
+의도적 제외 여부
+논문 §3.1은 전체 수집 공시를 Markdown으로 변환하고 SEC Item 경계를 따라 나눈다고 설명한다. 특정 Item의 일괄 제외 규칙은 명시돼 있지 않다.
+확인한 공식 GitHub에는 답변 생성/채점 코드만 있고 원문 파싱·chunk 생성 코드는 없다. 공개 issues와 HF discussion 목록에서도 제외 정책을 확인하지 못했다. 두 사례에서 참조만 있는 짧은 섹션이 빠지는 패턴은 관찰되지만, 의도적 정리·중복 제거·파싱 오류 중 원인을 판정할 증거는 없다. 저자에게 연락하지 않았다.
+논문: https://arxiv.org/html/2602.07294v4#S3.SS1
+코드: https://github.com/jyd777/Fin-RATE
+
+남아 있는 범위
+2,472개 공시 전수 대조를 완료한 것은 아니다. 본문 안에 포함된 표와 별도 링크 첨부파일을 구분해야 하며, 별도 exhibits 및 incorporated-by-reference 문서의 완비 여부도 미검증이다. 이번 확인만으로 모든 주요 금융 사실이 보존됐다고 보장하지 않는다.
+
+재현 자료
+원본 배포 revision: 284b1b4f6cd1e58574f1f1d17c29b35c6aa72cce
+스크립트: replicate/method/audit_finrate_source_sections.py
+비교 결과: replicate/result/finrate_source_audit_20261007/filing_comparisons.json
+섹션별 비교: replicate/result/finrate_source_audit_20261007/section_comparisons.csv
+확정 누락: replicate/result/finrate_source_audit_20261007/confirmed_reference_section_omissions.json
+원문 사본·SECmetadata: replicate/data/finrate_source_audit_20261007/
+실험 생성·채점·bank 구축은 재개하지 않았다.

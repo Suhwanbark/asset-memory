@@ -1,0 +1,31 @@
+# Large local datasets and generated experiment artifacts
+/data/
+/result/
+
+# Local agent history; shared research decisions belong in plan.md and docs/
+/context.md
+/process.md
+/docs/context_archive/
+/docs/workspace_relocation_*.json
+
+# Environments, credentials, caches, and build output
+/.venv/
+/.env
+/.env.*
+!/.env.example
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+/build/
+/dist/
+.DS_Store
+
+# Generated databases and local execution logs outside standard output folders
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.log
