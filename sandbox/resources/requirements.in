@@ -1,0 +1,13 @@
+requests==2.32.5
+pip==25.2
+beautifulsoup4==4.13.5
+lxml==6.0.1
+numpy==2.3.3
+pandas==2.3.2
+numpy-financial==1.0.0
+pypdf==6.0.0
+PyPDF2==3.0.1
+pdfminer.six==20250506
+pdfplumber==0.11.7
+Pillow==11.3.0
+PyMuPDF==1.26.4

@@ -12,6 +12,7 @@
 | `method/bank/` | 기업별 memory 구축, 갱신, 과거 버전 조회 |
 | `method/kg/` | Knowledge graph baseline |
 | `method/evaluation/` | 표본 구성, 답변 생성, 채점, 지표와 trace 분석 |
+| `sandbox/` | 격리된 Docker에서 web search agent로 질문 답변, trace·contamination 보존 (`sandbox/README.md`) |
 | `tests/` | 파서, 도구, 평가 등 검증 코드 |
 | `docs/` | 데이터 설명, 실험 설명, 결과 요약, 그림 |
 | `data/` | 공시 원문, 배포 데이터, DB, 인덱스, bank; Git 제외 |

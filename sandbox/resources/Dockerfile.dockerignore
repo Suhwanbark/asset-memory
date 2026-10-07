@@ -1,0 +1,4 @@
+*
+!Dockerfile
+!requirements.lock
+!environment_check.py
